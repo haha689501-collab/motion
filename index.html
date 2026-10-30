@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모션그래픽 프롬프트 11선 | 한국디지털미디어고등학교</title>
+<style>
+:root {
+  --bg:#FBFAF7; --bg-soft:#F7F4EE; --bg-tint:#F2EDE7; --surface:#FFFFFF;
+  --ink:#22211E; --ink-body:#4A443E; --ink-muted:#6F6A63;
+  --accent:#C6603C; --accent-strong:#A8412B; --accent-wash:#F6E9E1;
+  --navy:#1F2A44; --line:#E4DCD1; --line-strong:#C9C1B7;
+  --radius:14px; --shadow:0 1px 2px rgba(34,33,30,.05),0 6px 18px rgba(34,33,30,.06);
+  --font:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,'D2Coding',monospace;
+}
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+body { margin:0; background:var(--bg); color:var(--ink-body); font-family:var(--font); font-size:16px; line-height:1.65; letter-spacing:-.01em; -webkit-font-smoothing:antialiased; }
+h1,h2,h3 { color:var(--ink); margin:0; line-height:1.3; letter-spacing:-.02em; }
+a { color:var(--accent-strong); text-decoration:none; } a:hover { text-decoration:underline; }
+.wrap { max-width:1240px; margin:0 auto; padding:0 24px; }
+
+header.hero { padding:56px 0 28px; border-bottom:1px solid var(--line); }
+.eyebrow { font-size:13px; font-weight:700; color:var(--accent-strong); letter-spacing:.06em; }
+.hero h1 { font-size:clamp(28px,4vw,42px); margin:8px 0 12px; }
+.hero p.lead { max-width:780px; color:var(--ink-muted); }
+.dl-btn { display:inline-block; margin-top:18px; background:var(--accent-strong); color:#fff; font-weight:700; padding:10px 18px; border-radius:10px; } .dl-btn:hover { background:#8F3523; text-decoration:none; }
+.lead-list { margin:0; padding-left:20px; color:var(--ink-body); } .lead-list li { margin:2px 0; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+.facts span { background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:13px; }
+
+nav.jump { position:sticky; top:0; z-index:10; background:rgba(251,250,247,.93); backdrop-filter:blur(6px); border-bottom:1px solid var(--line); }
+nav.jump .wrap { display:flex; gap:6px; overflow-x:auto; padding-top:10px; padding-bottom:10px; }
+nav.jump a { flex:none; font-size:14px; font-weight:700; color:var(--ink); border:1px solid var(--line); background:var(--surface); border-radius:9px; padding:4px 11px; }
+nav.jump a.hl { background:var(--accent-strong); border-color:var(--accent-strong); color:#fff; }
+nav.jump a:hover { text-decoration:none; border-color:var(--accent); }
+
+section { padding:40px 0 8px; }
+section > .wrap > h2 { font-size:24px; margin-bottom:6px; }
+section > .wrap > p.sub { color:var(--ink-muted); margin-bottom:20px; }
+
+.guide { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; }
+.box { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.box h3 { font-size:16px; margin-bottom:8px; }
+.box ul, .box ol { margin:0; padding-left:18px; } .box li { margin:3px 0; font-size:15px; }
+.box b { color:var(--ink); }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(520px,1fr)); gap:22px; align-items:start; }
+@media (max-width:600px) { .grid { grid-template-columns:1fr; } }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px; scroll-margin-top:70px; }
+.card-head { display:flex; align-items:baseline; gap:12px; }
+.num { font-family:var(--mono); font-weight:800; font-size:15px; color:#fff; background:var(--navy); border-radius:7px; padding:2px 9px; flex:none; }
+.card h3 { font-size:19px; }
+.chips { display:flex; gap:6px; }
+.chip { font-size:12.5px; background:var(--bg-tint); color:var(--ink-body); border-radius:999px; padding:2px 10px; }
+.chip.warm { background:var(--accent-wash); color:var(--accent-strong); font-weight:700; }
+.video { aspect-ratio:16/9; background:#111; border-radius:10px; overflow:hidden; }
+.video video { width:100%; height:100%; display:block; background:#111; }
+.pending { height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:#bbb; font-weight:700; }
+.pending small { font-weight:400; color:#888; }
+.look { font-size:15px; }
+.row { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 14px; font-size:14px; }
+.ref { font-weight:700; }
+.minor a { color:var(--ink-muted); }
+.actions { display:flex; gap:8px; margin-top:auto; }
+.btn { font:inherit; font-weight:700; font-size:15px; border-radius:10px; padding:10px 16px; cursor:pointer; border:1px solid transparent; transition:background .15s, border-color .15s; }
+.btn.primary { background:var(--accent-strong); color:#fff; flex:1; }
+.btn.primary:hover { background:#8F3523; }
+.btn.primary.done { background:#2F7D4F; }
+.btn.ghost { background:var(--surface); color:var(--ink); border-color:var(--line-strong); }
+.btn.ghost:hover { border-color:var(--accent); }
+details.pv > summary { list-style:none; cursor:pointer; font-weight:700; font-size:15px; text-align:center; border:1px solid var(--line-strong); border-radius:10px; padding:9px 16px; color:var(--ink); background:var(--surface); }
+details.pv > summary::-webkit-details-marker { display:none; }
+details.pv > summary:hover { border-color:var(--accent); }
+details.pv[open] > summary { margin-bottom:10px; }
+details.pv[open] > summary::after { content:' — 접기'; color:var(--ink-muted); font-weight:400; }
+.actions { display:flex; gap:8px; } .actions .btn { flex:1; }
+dialog#pdlg { width:min(920px,92vw); max-height:88vh; overflow:hidden; padding:0; border:none; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,.35); background:var(--surface); color:var(--ink); }
+dialog#pdlg::backdrop { background:rgba(20,18,16,.55); }
+.dlg-head { display:flex; align-items:center; gap:10px; padding:16px 18px; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface); }
+.dlg-head h3 { flex:1; font-size:17px; }
+.dlg-head .btn { padding:8px 16px; flex:none; }
+#pdlg-pre { margin:0; max-height:calc(88vh - 72px); overflow:auto; white-space:pre-wrap; word-break:keep-all; padding:20px 22px; font-family:var(--mono); font-size:14px; line-height:1.65; background:var(--bg-soft); }
+pre.prompt { margin:0; max-height:420px; overflow:auto; white-space:pre-wrap; word-break:keep-all; background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:16px; font-family:var(--mono); font-size:13.5px; line-height:1.6; color:var(--ink); }
+
+/* 빈 프롬프트 */
+.builder { display:grid; grid-template-columns:minmax(300px,1fr) minmax(360px,1.2fr); gap:22px; align-items:start; }
+@media (max-width:900px) { .builder { grid-template-columns:1fr; } }
+.form { display:grid; gap:12px; }
+.form label { display:grid; gap:4px; font-size:14px; font-weight:700; color:var(--ink); }
+.form label small { font-weight:400; color:var(--ink-muted); }
+.form input, .form textarea, .form select { font:inherit; font-size:15px; font-weight:400; color:var(--ink); background:var(--surface); border:1px solid var(--line-strong); border-radius:9px; padding:8px 11px; }
+.form textarea { min-height:96px; resize:vertical; }
+.form .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.out { position:sticky; top:64px; display:grid; gap:10px; }
+.out textarea { width:100%; min-height:560px; font-family:var(--mono); font-size:13.5px; line-height:1.6; color:var(--ink); background:var(--bg-soft); border:1px solid var(--line); border-radius:10px; padding:16px; resize:vertical; }
+.out .opts { display:flex; gap:14px; align-items:center; font-size:14px; flex-wrap:wrap; }
+
+.toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); opacity:0; background:var(--ink); color:#fff; font-weight:700; padding:10px 18px; border-radius:10px; transition:opacity .2s, transform .2s; pointer-events:none; z-index:50; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+footer { margin-top:48px; padding:28px 0 48px; border-top:1px solid var(--line); color:var(--ink-muted); font-size:13.5px; }
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">AI × BUILD · 모션그래픽</div>
+  <h1>Claude로 만드는 모션그래픽 — 프롬프트 11선</h1>
+  <ul class="lead-list">
+    <li><b>영상 보기</b> — 프롬프트 11개로 만든 샘플 영상</li>
+    <li><b>프롬프트 복사</b> — 공통 블록까지 포함된 완성 프롬프트</li>
+    <li><b>사용</b> — Claude에 붙여 넣기, [ ] 부분만 내 내용으로 교체</li>
+    <li><b>새 프롬프트 만들기</b> — 마지막 <a href="#blank">빈 프롬프트</a>에서 내 주제로 작성</li>
+  </ul>
+  <div class="facts"><span>1920×1080 · 30fps · MP4</span><span>배경음악 + 코드 합성 효과음</span><span>참고 영상: Prompt Motion</span><span>모든 샘플 영상은 코드로만 생성</span></div>
+</div></header>
+
+<nav class="jump" aria-label="바로가기"><div class="wrap"><a href="#item-01">01</a><a href="#item-02">02</a><a href="#item-03">03</a><a href="#item-04">04</a><a href="#item-05">05</a><a href="#item-06">06</a><a href="#item-07">07</a><a href="#item-08">08</a><a href="#item-09">09</a><a href="#item-10">10</a><a href="#item-11">11</a><a href="#blank" class="hl">빈 프롬프트</a></div></nav>
+
+<section id="guide"><div class="wrap">
+  <h2>참고 사이트와 프롬프트 6원칙</h2>
+  <p class="sub">출처: Prompt Motion 갤러리 230여 개 영상 · 블로그 분석 · 노션 예시 10개</p>
+  <div class="guide">
+    <div class="box"><h3>참고 사이트</h3><ul>
+      <li><a href="https://www.prompt-motion.com/" target="_blank" rel="noopener"><b>Prompt Motion</b></a> — Claude로 만든 영상과 실제 프롬프트 원문</li>
+      <li><a href="https://www.prompt-motion.com/templates" target="_blank" rel="noopener">Templates</a> · <a href="https://www.prompt-motion.com/customize" target="_blank" rel="noopener">Customize</a> · <a href="https://www.prompt-motion.com/blog" target="_blank" rel="noopener">Blog</a></li>
+      <li><a href="https://motion-graphics.org/" target="_blank" rel="noopener"><b>motion-graphics.org</b></a> — 화제가 된 영상 93개와 프롬프트</li>
+      <li>영상·프롬프트 저작권은 각 제작자 소유 — 참고용, 결과물은 내 주제로 새로 제작</li></ul></div>
+    <div class="box"><h3>좋은 프롬프트 6원칙</h3><ol>
+      <li><b>과정</b> 제시 — 시작 → 끝</li>
+      <li><b>장면</b> 초 단위 분할</li>
+      <li><b>대상</b> 지정 — 누구에게 보여 줄 영상인지</li>
+      <li><b>사실 검증</b> 요청 — 숫자·연도 지어내기 금지</li>
+      <li><b>금지 목록</b> 포함 — AI가 만든 티가 나는 효과 차단</li>
+      <li><b>연결 요소</b> 1개 — 장면과 장면을 잇는 오브제</li></ol></div>
+  </div>
+</div></section>
+
+<section id="prompts"><div class="wrap">
+  <h2>프롬프트 11선 — 영상 보고 복사하기</h2>
+  <p class="sub">복사 시 프롬프트 끝의 <b>(+ 공통 블록)</b> 자리에 공통 블록 전체(금지 목록 · 제작 방식 · 출력 · 검수) 자동 포함</p>
+  <div class="grid">
+<article class="card" id="item-01">
+  <div class="card-head">
+    <span class="num">01</span>
+    <h3>디미고를 소개하는 키네틱 타이포 쇼릴</h3>
+  </div>
+  <div class="chips"><span class="chip">★☆☆</span><span class="chip">12초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/01.jpg" src="videos/01.mp4"></video></div>
+  <p class="look">원본 프롬프트는 한 줄(&quot;15초 쇼릴, 최대한 보여줘&quot;). Prompt Motion에서 가장 많이 복사된 프롬프트. 한 줄 프롬프트와 장면 지정 프롬프트의 결과 비교.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/shneural-2abdfa" target="_blank" rel="noopener">참고 영상 · Bold kinetic type showreel ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p1">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p1" data-title="01. 디미고를 소개하는 키네틱 타이포 쇼릴">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p1" hidden>모션 레퍼런스: https://www.prompt-motion.com/shneural-2abdfa
+위 영상의 굵은 글자, 강한 색 대비, 빠른 템포를 참고해 아래 장면을 제작해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+12초 분량의 키네틱 타이포그래피 학교 소개 쇼릴을 만들어줘.
+주인공은 한국디지털미디어고등학교, &quot;DIMIGO&quot;다.
+화면에 나오는 학교 정보(학교명, 학과명)는 사실만 쓰고, 숫자·수상 실적·순위는 지어내지 마.
+
+[비주얼 스타일]
+- 배경: 오프화이트 ↔ 거의 검정 두 가지만 장면마다 교차
+- 강조색: [내가 고른 색 1개] (예: 비비드 오렌지)
+- 폰트: 아주 굵은 고딕 1종 + 코드용 고정폭 1종
+
+[장면 구성]
+- 0~2초: 터미널 커서가 깜빡이다 &quot;DIMIGO&quot;가 한 글자씩 타이핑 → 글자가 화면을 꽉 채우게 확대
+- 2~5초: 글자들이 쪼개져 4개 학과 이름으로 차례로 재조립
+  (&quot;e-비즈니스과&quot;, &quot;디지털콘텐츠과&quot;, &quot;웹프로그래밍과&quot;, &quot;해킹방어과&quot;)
+- 5~8초: 각 학과 이름이 그 학과를 상징하는 도형으로 변형
+  (e-비즈니스=상승 그래프, 디지털콘텐츠=재생 버튼, 웹프로그래밍=&lt;/&gt;, 해킹방어=방패)
+- 8~10초: 네 도형이 가운데로 합쳐져 한 문장으로 &quot;[학교를 한 줄로 표현하는 문구]&quot;
+- 10~12초: &quot;DIMIGO / 한국디지털미디어고등학교&quot; 엔드 카드, 첫 화면의 커서로 돌아와 루프
+
+[모션 연출]
+- 글자는 개별 글자 단위로 움직이게
+- 모든 장면은 이전 장면의 글자/도형이 변형되어 이어지게 (컷 금지)
+- 배경 전환은 화면 속 글자나 도형에서 원이 퍼지며 바뀌게
+- 박자마다 화면에 변화 1개 이상
+
+[사운드 디자인]
+- 타이핑: 기계식 키보드 틱
+- 단어 착지: 묵직한 타격음
+- 엔드 카드: 짧은 스탭
+
+[배경음악]
+- music/01_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Funky Happy Day Light&quot; / Drift_Sound / https://pixabay.com/music/funk-funky-happy-day-light-473457/
+- 파일이 없으면 120 BPM 펑키한 드럼·베이스·코드 그루브 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-02">
+  <div class="card-head">
+    <span class="num">02</span>
+    <h3>무차별 대입을 막는 토큰 버킷</h3>
+  </div>
+  <div class="chips"><span class="chip">★★☆</span><span class="chip">15초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/02.jpg" src="videos/02.mp4"></video></div>
+  <p class="look">&quot;캔버스만, 라이브러리 없이, 모든 프레임은 시간의 순수 함수&quot;라는 <b>제작 방식 지정</b>. 실제 렌더링에서 프레임이 튀지 않게 하는 핵심 기법.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/parkerrex-1a54fe" target="_blank" rel="noopener">참고 영상 · Token bucket rate limiter ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p2">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p2" data-title="02. 무차별 대입을 막는 토큰 버킷">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p2" hidden>모션 레퍼런스: https://www.prompt-motion.com/parkerrex-1a54fe
+위 영상처럼 토큰 버킷을 시각화하되, 로그인 무차별 대입 방어 상황으로 바꿔줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+15초 분량의 다이어그램 설명 영상을 만들어줘.
+대상은 서버를 직접 만들어 본 적 없는 고등학생이다.
+Canvas만 사용, 라이브러리 금지, 모든 프레임은 시간 t의 순수 함수로 그려줘.
+
+[설정 — 화면 수치와 동작이 정확히 일치해야 함]
+- 버킷 용량 5토큰, 1초에 1토큰씩 다시 채워짐
+- 로그인 시도 1회 = 토큰 1개 소모
+- 토큰이 0이면 요청은 &quot;429 Too Many Requests&quot;로 거절
+
+[비주얼 스타일]
+- 배경 짙은 남색, 버킷은 반투명 유리 원통, 토큰은 금색 코인
+- 왼쪽: 로그인 요청 화살표가 들어오는 입구 / 오른쪽: 서버
+- 정상 사용자 = 파란 요청, 공격 봇 = 빨간 요청
+
+[장면 구성]
+- 0~3초: 버킷에 코인 5개가 차 있고, 위에서 1초마다 코인이 하나씩 떨어지는 구조 소개
+- 3~6초: 파란 사용자가 2번 로그인 → 코인 2개 소모, 서버 &quot;200 OK&quot;
+- 6~10초: 빨간 봇이 0.1초 간격으로 연타 → 코인이 순식간에 바닥 → 이후 요청은 버킷 앞에서 튕겨나가며 &quot;429&quot;
+- 10~13초: 화면 아래 그래프: x축 시간, y축 남은 토큰 (봇 공격 구간에서 0에 붙어 있음)
+- 13~15초: 정리 문구 &quot;빠르게 시도할수록 빨리 막힌다&quot;
+
+[모션 연출]
+- 그래프 선은 버킷 속 코인 개수와 같은 값으로 실시간 그려줘
+- 튕겨나가는 요청은 짧게 붉게 표시되고 사라지게
+
+[사운드 디자인]
+- 코인 리필: 맑은 &quot;띵&quot;, 토큰 소모: 코인 소리
+- 429 거절: 낮은 버저 (연타 구간은 겹치지 않게 볼륨 조절)
+
+[배경음악]
+- music/02_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Science Technology Ambient Techno — Drumless Ambient Loop&quot; / Musinova / https://pixabay.com/music/ambient-science-technology-ambient-techno-drumless-ambient-loop-611598/
+- 파일이 없으면 드럼 없이 잔잔한 앰비언트 테크노(110 BPM 안팎) 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거
+- 시간축의 토큰 수가 규칙대로 계산되는지 확인</pre>
+</article>
+<article class="card" id="item-03">
+  <div class="card-head">
+    <span class="num">03</span>
+    <h3>떨어지는 공이 연주하는 음악 기계</h3>
+  </div>
+  <div class="chips"><span class="chip">★★★</span><span class="chip">20초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/03.jpg" src="videos/03.mp4"></video></div>
+  <p class="look">원본은 &quot;모든 음이 눈에 보이는 충돌에서 나오는 45초 음악 기계&quot;. 악기 배치도처럼 정밀한 화면, <b>소리와 화면이 1:1로 맞물리는 싱크 설계</b>.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/kamstudiolabs-447565" target="_blank" rel="noopener">참고 영상 · Collision-driven music machine ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p3">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p3" data-title="03. 떨어지는 공이 연주하는 음악 기계">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p3" hidden>모션 레퍼런스: https://www.prompt-motion.com/kamstudiolabs-447565
+위 영상처럼 발사대에서 튀어 나온 공이 악기에 부딪힐 때마다 음이 나는 정밀한 음악 기계를 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+20초 분량의 음악 기계 영상을 만들어줘.
+모든 음은 화면에서 보이는 충돌 순간에만 나와야 하고, 별도의 배경음악은 쓰지 않는다.
+
+[비주얼 스타일]
+- 전체를 3D 공간으로 구성: 악기 3단이 비스듬한 3D 무대 위에 놓이고, 공은 실제 3D 포물선으로 날아감
+- 카메라는 정면 설계도 시점에서 시작해 비스듬한 3D 시점으로 돌아 들어갔다가 다시 전체로 빠짐
+- 배경: 짙은 남색, 아주 옅은 설계도 격자
+- 3단 악기 배치
+  · 위: 글로켄슈필 건반 11개 (C5~D6, 건반 아래 음 이름)
+  · 가운데: 마림바 건반 18개 + 건반 아래 길이가 다른 공명관
+  · 아래: 베이스 바 8개 + 드럼(스네어, 킥) + 심벌(하이햇, 크래시)
+- 각 단 양 끝에 공을 쏘는 발사대(회전하는 포신)와 공을 받는 컵
+- 공: 금색으로 빛나는 작은 구슬, 지나간 자리에 짧은 꼬리
+- 왼쪽 위 제목 &quot;낙하하는 공을 위한 연습곡&quot; + 작은 글씨 &quot;D minor → D major · 156 bpm&quot;, 오른쪽 위 &quot;경과 시간 / 20.0&quot; 과 &quot;친 음 개수&quot;
+
+[장면 구성]
+- 0~4초: 인트로 — 글로켄슈필만 연주, 발사대가 공을 하나씩 쏨
+- 4~9초: 마림바 합류, 공 2~3개가 동시에 날아다님
+- 9~14초: 베이스 바와 드럼 합류, 카메라가 마림바 쪽으로 천천히 다가감
+- 14~18초: 클라이맥스 — 모든 악기 동시 연주, D 장조로 전환, 크래시 심벌 2회
+- 18~20초: 마지막 공 하나가 킥 드럼을 쳐서 끝, 카메라가 전체 기계로 물러나며 정지
+
+[모션 연출]
+- 먼저 악보(음 높이·시각)를 정하고, 그 시각에 정확히 충돌하도록 포물선 궤적을 역산해줘
+- 충돌 순간 건반이 살짝 눌렸다 돌아오고, 해당 건반과 음 이름이 잠깐 밝아짐
+- 공은 컵에 들어가면 사라지고, 발사대는 쏘기 직전 포신을 조준
+- 카메라는 고정 → 천천히 줌인 → 줌아웃
+
+[사운드 디자인]
+- 레트로 칩튠처럼 신나는 곡: 150~160 BPM, 글로켄슈필·마림바의 빠른 16분음표 아르페지오, 달리는 베이스, 꾸준한 킥·스네어·하이햇
+- 글로켄슈필, 마림바, 베이스, 스네어, 킥, 하이햇, 크래시 음색을 코드로 합성
+- 기존 곡 멜로디 사용 금지, 직접 만든 곡
+- 음이 겹쳐도 소리가 찢어지지 않게 마스터 리미터
+
+- Three.js 같은 3D 라이브러리를 쓸 수 없는 환경이면 원근 투영을 직접 구현해도 돼
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-04">
+  <div class="card-head">
+    <span class="num">04</span>
+    <h3>픽셀아트로 보는 해킹의 역사</h3>
+  </div>
+  <div class="chips"><span class="chip">★★☆</span><span class="chip">18초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/04.jpg" src="videos/04.mp4"></video></div>
+  <p class="look">원본은 &quot;LLM의 역사를 픽셀아트로, 15초 이내, 단일 HTML&quot;. 짧은 시간에 연대기를 압축하는 방식 참고.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/pluginplay-3d4006" target="_blank" rel="noopener">참고 영상 · Pixel art LLM history ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p4">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p4" data-title="04. 픽셀아트로 보는 해킹의 역사">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p4" hidden>모션 레퍼런스: https://www.prompt-motion.com/pluginplay-3d4006
+위 영상처럼 역사를 픽셀아트로 빠르게 압축해 보여주는 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+18초 분량의 픽셀아트 타임라인 영상을 만들어줘.
+주제는 &quot;보안 사건이 우리를 어떻게 바꿨나&quot;이다.
+제작 전에 각 사건의 연도와 내용을 먼저 조사·확인하고, 숫자나 피해 규모는 지어내지 마.
+
+[사건 6개 — 각 3초]
+- 1988 모리스 웜: 픽셀 지렁이가 컴퓨터 사이를 기어다님
+- 2000 ILOVEYOU: 하트 편지가 메일함마다 복제됨
+- 2010 스턱스넷: 공장 원심분리기가 빙글빙글 이상하게 돎
+- 2014 하트블리드: 피 흘리는 하트에서 메모리 조각이 새어 나옴
+- 2017 워너크라이: 화면마다 잠금 화면 + 몸값 요구
+- 2021 Log4Shell: 로그 한 줄이 문이 되어 열림 → 마지막에 방패 든 픽셀 해커(우리)가 등장
+
+[비주얼 스타일]
+- 16비트 픽셀아트, 각 시대마다 화면 팔레트가 조금씩 진화
+- 하단에 연도 타임라인 바가 왼쪽→오른쪽으로 진행
+
+[텍스트]
+- 연도 + 사건 이름만 (설명 문장 금지, 그림으로 설명)
+
+[모션 연출]
+- 사건 전환은 앞 사건의 오브젝트가 다음 사건의 오브젝트로 변신하게
+- 정수 좌표 픽셀 렌더링, 안티앨리어싱 금지
+
+[사운드 디자인]
+- 사건마다 칩튠 모티프 1개, 마지막 방패 등장 시 레벨업 팡파르
+
+[배경음악]
+- music/04_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Intro #01 Chiptune C64&quot; / tAUREON / https://pixabay.com/music/synthwave-intro-01-chiptune-c64-6581/
+- 파일이 없으면 160 BPM 레트로 칩튠(펄스파 아르페지오 + 삼각파 베이스 + 노이즈 드럼) 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-05">
+  <div class="card-head">
+    <span class="num">05</span>
+    <h3>3분 타임어택 — 컵라면 완성 작전</h3>
+  </div>
+  <div class="chips"><span class="chip">★★☆</span><span class="chip">15초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/05.jpg" src="videos/05.mp4"></video></div>
+  <p class="look">설명 영상 좋아요 1위인 레시피 영상의 <b>시작과 끝이 있는 과정</b>을 타임어택으로 변형. 카운트다운에 맞춘 템포 가속과 마지막 슬로모션의 대비.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/ror-fly-9950f1" target="_blank" rel="noopener">참고 영상 · Negroni recipe animation ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p5">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p5" data-title="05. 3분 타임어택 — 컵라면 완성 작전">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p5" hidden>모션 레퍼런스: https://www.prompt-motion.com/ror-fly-9950f1
+위 영상처럼 재료와 분량이 들어가는 순간을 라벨과 함께 보여주는 과정 설명 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+15초 분량의 컵라면 타임어택 모션그래픽을 만들어줘.
+흐름은 &quot;빈 컵 → 3분 카운트다운 → 완성된 라면 한 젓가락&quot;이고,
+영화 예고편처럼 긴박하게, 라면은 김이 오르고 면발이 살아 있는 듯 생생하게 보여줘.
+
+[비주얼 스타일]
+- 배경: 거의 검정, 카운트다운과 경고 표시는 빨강, 라면은 따뜻한 주황·노랑
+- 컵은 약간 위에서 내려다보는 3/4 시점, 단면도가 아니라 실제 컵처럼 입체감 있게
+- 면: 꼬불꼬불한 곡선이 뭉친 덩어리 → 물을 먹으며 풀어지는 가닥으로 변화
+- 국물: 끓는 거품이 올라오고 기름 방울이 반짝이며 고춧가루 입자가 떠다니게
+- 김: 컵 위로 휘어 오르는 반투명 곡선 여러 줄
+
+[장면 구성]
+- 0~2초: 검은 화면에 빨간 디지털 타이머 &quot;03:00&quot;이 쾅 하고 켜짐, 아래에 &quot;MISSION: 컵라면&quot;
+- 2~4초: 빠른 컷 3개 — 뚜껑이 표시선까지 열림 / 건더기 스프가 쏟아짐 / 분말 스프가 흩날림 (컷마다 라벨)
+- 4~6초: 주전자에서 끓는 물이 쏟아져 표시선까지 차오름, 옆의 수위 게이지가 빨강에서 초록으로 바뀌며 &quot;표시선 OK&quot;
+- 6~11초: 뚜껑이 닫히고 타이머가 03:00 → 00:00으로 빠르게 감김
+  · 남은 시간이 줄수록 화면 가장자리의 빨간 경고 띠가 두꺼워지고 심장 박동처럼 맥동
+  · 뚜껑 틈으로 김이 새어 나오고, 컵 속 면이 풀어지는 모습이 반투명하게 겹쳐 보임
+  · 00:10부터는 숫자가 화면을 가득 채우며 한 칸씩 내려감
+- 11~13초: 00:00과 함께 알람 → 뚜껑이 확 열리고 김이 한꺼번에 솟아오름
+- 13~15초: 젓가락이 컵 속 국물에서 면을 높이 들어 올리는 슬로모션 (면발은 컵 안 국물에서 올라오고, 국물은 다시 컵 안으로 떨어짐), &quot;MISSION COMPLETE&quot;는 컵과 겹치지 않게
+
+[텍스트]
+- &quot;03:00&quot; 타이머, &quot;MISSION: 컵라면&quot;, 재료 라벨(건더기 스프 / 분말 스프 / 끓는 물), &quot;표시선 OK&quot;, &quot;MISSION COMPLETE&quot;만 사용
+- 특정 제품 이름은 쓰지 마
+
+[모션 연출]
+- 0~6초는 0.5초 단위의 빠른 컷과 줌인, 6~11초는 카운트다운에 맞춰 템포가 점점 빨라지게
+- 마지막 2초는 슬로모션으로 긴장을 푸는 대비
+- 면발·김·거품은 멈추지 않고 미세하게 움직여 살아 있는 느낌
+
+[사운드 디자인]
+- 타이머 점등: 묵직한 임팩트 + 전자 비프
+- 뚜껑 뜯기, 스프 쏟기, 물 붓기: 실제 소리처럼 합성
+- 카운트다운: 초침 틱 + 점점 빨라지는 심장 박동 저음
+- 00:00: 경보음 → 뚜껑이 열리는 순간 시원한 스팀 소리
+- 마지막: 후루룩 느낌의 짧은 효과음 + 완료 징글
+
+[배경음악]
+- music/05_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 내려받은 곡을 쓰면 원곡 표기: 곡 제목 / 작곡자 / 링크
+- 파일이 없으면 긴박한 액션 예고편 느낌의 드럼·스트링 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-06">
+  <div class="card-head">
+    <span class="num">06</span>
+    <h3>댓글 속에 숨은 스크립트 — XSS 카드 폭풍</h3>
+  </div>
+  <div class="chips"><span class="chip">★★★</span><span class="chip">20초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/06.jpg" src="videos/06.mp4"></video></div>
+  <p class="look">깊이 흐림(피사계 심도)이 걸린 <b>3D 공간에 떠다니는 UI 카드</b>와 굵은 고딕 + 이탤릭 세리프를 섞은 큰 문장. 혼돈 → 정리로 가는 구성.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/agonaliu-466a8f" target="_blank" rel="noopener">참고 영상 · Trezio app motion reel ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p6">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p6" data-title="06. 댓글 속에 숨은 스크립트 — XSS 카드 폭풍">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p6" hidden>모션 레퍼런스: https://www.prompt-motion.com/agonaliu-466a8f
+위 영상처럼 3D 공간에 UI 카드 수십 장이 깊이 흐림과 함께 떠다니고, 굵은 고딕과 이탤릭 세리프를 섞은 큰 문장이 지나가는 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+20초 분량으로 저장형 XSS(Stored XSS)와 방어법을 설명하는 영상을 만들어줘.
+대상은 웹 개발을 막 배운 고등학생이고, 기술 내용은 정확하게, 실제 공격 코드는 &quot;&lt;script&gt;&quot; 태그 표시까지만 써줘.
+
+[비주얼 스타일]
+- 전체를 3D 공간으로 구성: 카드는 실제 3D 위치·회전을 가진 판, 원근에 따라 크기와 흐림이 달라지게
+- 큰 문장은 카드 사이 공간에 떠 있는 3D 글자로, 카메라가 그 사이를 통과
+- 배경: 짙은 남색 → 가장자리로 갈수록 검정
+- 카드: 게시판 댓글 카드(프로필 점 + 회색 글줄), 브라우저 창 카드, 쪽지 카드
+- 카메라에서 먼 카드는 흐리고 작게, 가까운 카드는 선명하고 크게 (깊이 흐림)
+- 강조색: 위험 = 빨강, 안전 = 민트, 문장 강조 = 연보라
+- 폰트: 굵은 고딕 + 이탤릭 세리프 + 코드용 고정폭
+
+[장면 구성]
+- 0~3초: 수십 장의 댓글 카드가 3D 공간을 천천히 회전하며 떠다님, 큰 문장 &quot;댓글은 그냥&quot; (굵은 고딕) + &quot;글자일까?&quot; (이탤릭 세리프, 연보라)
+- 3~7초: 카메라가 카드 하나로 빠르게 날아가 초점, 카드 속 &quot;&lt;script&gt;&quot;가 빨갛게 깜빡임 → 글자들이 카드 밖으로 튀어나옴
+- 7~11초: 튀어나온 글자가 주변 브라우저 카드로 날아가 꽂히고, 카드마다 빨간 &quot;실행됨&quot; 표시가 번져 감, 큰 문장 &quot;다른 사람의 브라우저에서&quot; / &quot;실행된다.&quot;
+- 11~16초: 모든 카드가 한꺼번에 정렬되며 비스듬히 누운 3D 격자로 바뀜, 가운데 큰 글자 &quot;&lt;&quot;가 &quot;&amp;lt;&quot;로 변형되며 &quot;출력할 때 이스케이프&quot;, 이어서 &quot;Content-Security-Policy&quot; 띠가 격자를 가로지르며 남은 빨간 카드에 &quot;차단&quot; 도장
+- 16~20초: 민트색으로 바뀐 격자 위로 마무리 문장 &quot;입력은 데이터로,&quot; + &quot;출력은 안전하게.&quot; 와 작은 글씨 &quot;XSS 방어 = 출력 이스케이프 + CSP&quot;
+
+[모션 연출]
+- 카메라는 계속 움직임 (떠다니기 → 급속 접근 → 뒤로 빠지며 격자 전체 보기)
+- 혼돈(0~11초)은 카드가 제각각 회전, 정리(11초~)는 모든 카드가 한 박자에 맞춰 정렬
+- 큰 문장은 글자 단위로 등장, 카드 사이를 통과하며 지나가게
+
+[사운드 디자인]
+- 카드 떠다니기: 낮은 공기 소리
+- &quot;&lt;script&gt;&quot; 깜빡임: 글리치 틱
+- &quot;실행됨&quot; 번짐: 짧은 경고음이 겹치며 점점 빨라짐
+- 격자 정렬: 한 번의 강한 착지음
+- &quot;차단&quot; 도장: 쾅
+
+[배경음악]
+- music/06_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 내려받은 곡을 쓰면 원곡 표기: 곡 제목 / 작곡자 / 링크
+- 파일이 없으면 160 BPM 레트로 칩튠(펄스파 아르페지오 + 삼각파 베이스 + 노이즈 드럼) 스타일로, 0~11초는 긴장감 있는 단조 → 11초부터 밝은 장조로 전환되는 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+- Three.js 같은 3D 라이브러리를 쓸 수 없는 환경이면 원근 투영을 직접 구현해도 돼
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-07">
+  <div class="card-head">
+    <span class="num">07</span>
+    <h3>글자 터널로 빨려 드는 동아리 소개</h3>
+  </div>
+  <div class="chips"><span class="chip">★★☆</span><span class="chip">15초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/07.jpg" src="videos/07.mp4"></video></div>
+  <p class="look">원형으로 회전하는 글자 고리가 겹겹이 쌓여 만든 <b>타이포 터널</b>과 가운데에 꽂히는 큰 단어. 글자만으로 만든 깊이감과 속도감.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/motiondsgnr-9dcfa6" target="_blank" rel="noopener">참고 영상 · Bold typographic motion showreel ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p7">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p7" data-title="07. 글자 터널로 빨려 드는 동아리 소개">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p7" hidden>모션 레퍼런스: https://www.prompt-motion.com/motiondsgnr-9dcfa6
+위 영상처럼 원형으로 회전하는 글자 고리가 겹겹이 터널을 만들고, 가운데에 큰 단어가 꽂히는 타이포그래피 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+15초 분량의 키네틱 타이포그래피 동아리 홍보 영상을 만들어줘.
+동아리 이름은 &quot;[동아리명]&quot;, 모집 문구는 &quot;[모집 문구]&quot;다. (실제 정보만 쓰고 숫자·실적은 지어내지 마)
+
+[비주얼 스타일]
+- 전체를 3D 공간으로 구성: 글자 고리는 깊이(z) 방향으로 겹겹이 놓인 입체 링, 카메라가 실제로 터널 안을 전진·회전하며 통과
+- 큰 단어와 동아리명은 두께가 있는 3D 입체 글자(옆면은 어두운 톤)
+- 배경: 검정
+- 글자 고리 색: 핫핑크, 노랑, 파랑, 흰색을 고리마다 번갈아, 강조 1색은 빨강(빨간 점)
+- 폰트: 아주 굵은 대문자 산세리프 + 한글 굵은 고딕
+- 고리 글자: &quot;[키워드1] • [키워드2] • [키워드3] • CTF • [키워드4] •&quot; 를 원 둘레를 따라 반복
+  (예: 분석 • 리버싱 • 웹해킹 • CTF • 포렌식 •)
+
+[장면 구성]
+- 0~2초: 검은 화면 가운데 빨간 점 하나 → 점이 튀며 첫 번째 글자 고리로 펼쳐짐
+- 2~5초: 고리가 안쪽으로 6~8겹 복제되며 터널 완성, 고리마다 회전 방향이 반대, 카메라가 터널 안으로 빨려 들어감
+- 5~8초: 가운데에 큰 단어가 박자마다 교체되며 꽂힘 &quot;분석&quot; → &quot;공격&quot; → &quot;방어&quot; (단어가 바뀔 때마다 고리 회전이 한 단계씩 빨라짐)
+- 8~11초: 터널이 3D로 기울며 휘어짐(고리가 타원으로 눌림), 가장 바깥 고리가 화면 밖으로 날아가며 다음 고리가 앞으로 나옴
+- 11~13초: 모든 고리가 가운데로 빨려 들어가 빨간 점으로 수축 → 점이 터지듯 &quot;[동아리명]&quot;이 화면을 가득 채움
+- 13~15초: &quot;[동아리명]&quot; + &quot;[모집 문구]&quot; 엔드 카드, 뒤에서 고리 하나만 천천히 회전
+
+[모션 연출]
+- 고리 회전·확대는 음악 비트에 맞춰 가속과 감속을 반복
+- 가운데 단어는 착지 순간 스케일 120% → 100%로 강하게
+- 화면은 1초 이상 멈추지 않게, 마지막 2초만 안정적으로 유지
+- 모든 장면은 빨간 점 또는 글자 고리가 이어 주게 (컷 금지)
+
+[사운드 디자인]
+- 빨간 점 등장: 짧은 핑
+- 고리 펼침: 회전하는 휘익 소리
+- 가운데 단어 착지: 묵직한 타격음
+- 터널 수축 → 동아리명: 빨려 드는 리버스 사운드 + 임팩트
+
+[배경음악]
+- music/07_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 내려받은 곡을 쓰면 원곡 표기: 곡 제목 / 작곡자 / 링크
+- 파일이 없으면 160 BPM 레트로 칩튠(펄스파 아르페지오 + 삼각파 베이스 + 노이즈 드럼) 스타일의 신나는 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+- Three.js 같은 3D 라이브러리를 쓸 수 없는 환경이면 원근 투영을 직접 구현해도 돼
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-08">
+  <div class="card-head">
+    <span class="num">08</span>
+    <h3>방화벽 12겹을 탈출하는 패킷</h3>
+  </div>
+  <div class="chips"><span class="chip">★★☆</span><span class="chip">20초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/08.jpg" src="videos/08.mp4"></video></div>
+  <p class="look">원본 프롬프트는 단 한 줄 &quot;바이럴 될 만한 영상을 만들어줘&quot;. Claude가 고른 것은 회전하는 고리 12개를 공이 탈출하는 물리 시뮬레이션. 숏폼에서 많이 보이는 형식.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/kantamk-61f410" target="_blank" rel="noopener">참고 영상 · Ball escaping twelve rings ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p8">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p8" data-title="08. 방화벽 12겹을 탈출하는 패킷">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p8" hidden>모션 레퍼런스: https://www.prompt-motion.com/kantamk-61f410
+위 영상의 회전하는 동심원 고리와 공의 물리 탈출 구조를 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+20초 분량의 물리 시뮬레이션 숏폼 영상을 만들어줘.
+작은 빛나는 패킷 공이 회전하는 방화벽 고리 12겹을 하나씩 뚫고 탈출한다.
+
+[비주얼 스타일]
+- 배경 검정, 고리는 바깥쪽으로 갈수록 색이 초록 → 노랑 → 빨강으로 변함
+- 각 고리에는 회전하는 작은 틈(포트) 1개
+- 공 내부에 현재 깬 고리 수 카운터 &quot;0/12&quot;
+
+[장면 구성]
+- 0~2초: 중앙의 공 등장, 12겹 고리가 서로 다른 속도·방향으로 회전 시작
+- 2~17초: 공이 고리 안쪽 벽에 튕기다가 틈을 만나면 다음 고리로 탈출, 탈출한 고리는 산산이 흩어지며 사라짐
+- 17~20초: 마지막 고리 탈출 → 화면 밖으로 날아가며 &quot;ACCESS GRANTED&quot;
+
+[모션 연출]
+- 물리는 시드 고정 결정론적 시뮬레이션 (Math.random 금지, 매번 같은 결과)
+- 공이 벽에 부딪힐 때마다 그 고리가 잠깐 밝아지게
+- 후반으로 갈수록 탈출 간격이 빨라지는 긴장감 (필요하면 고리 속도로 조절)
+
+[사운드 디자인]
+- 벽 충돌마다 짧은 음 — 충돌 순서대로 음계가 올라가 하나의 멜로디처럼 들리게
+- 고리 파괴: 유리 깨짐, 마지막 탈출: 큰 임팩트
+
+[배경음악]
+- music/08_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Cyber Glitch&quot; / Meraj_Melody / https://pixabay.com/music/electronic-cyber-glitch-482898/
+- 파일이 없으면 아주 조용한 저음 펄스(충돌음 멜로디가 주인공이므로 배경음악은 아주 작게) 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-09">
+  <div class="card-head">
+    <span class="num">09</span>
+    <h3>내 메시지가 친구에게 가기까지 — 3D 투어</h3>
+  </div>
+  <div class="chips"><span class="chip">★★★</span><span class="chip">25초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/09.jpg" src="videos/09.mp4"></video></div>
+  <p class="look">원본 프롬프트는 &quot;AI 데이터센터 안에서 무슨 일이 일어나는지 보여줘&quot; 한 줄 (Effort High, One-shot, HTML). 보이지 않는 인프라를 3D 공간 여행처럼 표현.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/sayan-shanky-f850d8" target="_blank" rel="noopener">참고 영상 · AI data centre 3D tour ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p9">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p9" data-title="09. 내 메시지가 친구에게 가기까지 — 3D 투어">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p9" hidden>모션 레퍼런스: https://www.prompt-motion.com/sayan-shanky-f850d8
+위 영상처럼 보이지 않는 인프라 내부를 카메라가 여행하는 3D 투어 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+25초 분량의 Three.js 3D 투어 영상을 만들어줘.
+주제는 &quot;내가 보낸 메시지 &#x27;밥 먹었어?&#x27;가 친구 휴대폰에 도착하기까지&quot;이고,
+대상은 네트워크를 처음 배우는 고등학생이다. 각 단계는 기술적으로 정확하게.
+
+[장면 구성 — 카메라가 메시지 패킷을 계속 따라감]
+- 0~4초: 휴대폰 화면에서 &quot;밥 먹었어?&quot; 전송 → 글자가 패킷 큐브로 접힘
+- 4~8초: 큐브가 자물쇠 껍데기에 싸이며 &quot;TLS 암호화&quot;, 내용은 알아볼 수 없는 문자로 바뀜
+- 8~12초: Wi-Fi 공유기 → 통신사 망으로 빛의 선을 타고 이동
+- 12~17초: 데이터센터 진입 — 서버 랙 사이 복도를 비행, 랙 LED가 지나가며 반짝임
+- 17~21초: 메신저 서버가 받아 친구에게 다시 전달 (다시 암호화된 채로 출발)
+- 21~25초: 친구 휴대폰에서 자물쇠가 풀리며 &quot;밥 먹었어?&quot; 표시 → 답장 &quot;ㅇㅇ&quot; 말풍선
+
+[비주얼 스타일]
+- 차가운 남색 공간 + 패킷만 따뜻한 주황
+- 각 단계에 작은 라벨 1개 (&quot;TLS&quot;, &quot;공유기&quot;, &quot;통신사&quot;, &quot;데이터센터&quot;, &quot;서버&quot;)
+
+[카메라 연출]
+- 한 번도 끊기지 않는 연속 카메라 이동, 이징 cubic-bezier(0.65, 0, 0.35, 1)
+- 데이터센터 구간만 속도를 줄여 웅장함 강조
+
+[사운드 디자인]
+- 전송 &quot;슉&quot;, 암호화 철컥, 이동 구간 바람 소리, 서버실 팬 험, 도착 알림음
+
+[배경음악]
+- music/09_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Futuristic Space Ambient Cinematic Music&quot; / sigmaeffect / https://pixabay.com/music/ambient-futuristic-space-ambient-cinematic-music-464375/
+- 파일이 없으면 느리고 넓게 퍼지는 우주 앰비언트 패드 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-10">
+  <div class="card-head">
+    <span class="num">10</span>
+    <h3>패치되기 싫은 버그 — 단편 애니메이션</h3>
+  </div>
+  <div class="chips"><span class="chip">★★★</span><span class="chip">30초</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/10.jpg" src="videos/10.mp4"></video></div>
+  <p class="look">원본은 &quot;고쳐지기 싫은 버그에 대한 90초 단편 애니메이션&quot;. 캐릭터와 이야기가 있는 형식. 수업용은 30초로 축소.</p>
+  <div class="row"><a class="ref" href="https://www.prompt-motion.com/kamstudiolabs-c9bb28" target="_blank" rel="noopener">참고 영상 · Animated short about a bug ↗</a><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p10">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p10" data-title="10. 패치되기 싫은 버그 — 단편 애니메이션">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p10" hidden>모션 레퍼런스: https://www.prompt-motion.com/kamstudiolabs-c9bb28
+위 영상처럼 버그를 캐릭터로 만든 단편 애니메이션 방식을 참고해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+30초 분량의 단편 애니메이션을 만들어줘.
+주인공은 오래된 코드 속에 숨어 사는 작은 버그 &quot;오버플로&quot;다. 패치가 다가오자 도망친다.
+
+[캐릭터]
+- 오버플로: 동그란 몸, 다리 6개, 몸에 &quot;[8]&quot; 크기 배열 무늬, 겁 많지만 귀여움
+- 패치: 노란 테이프 롤 모양 로봇, 무표정하고 집요함
+
+[장면 구성]
+- 0~5초: 코드 줄로 된 도시. 오버플로가 배열 칸 밖으로 한 칸 삐져나와 낮잠
+- 5~12초: 경고음과 함께 &quot;PATCH v2.1&quot; 로봇 등장, 오버플로가 함수 사이를 뛰어 도망
+- 12~20초: 추격전 — if문 다리를 건너고, for 루프 회전목마를 돌고, 주석(//) 속에 숨음
+- 20~26초: 패치가 주석을 걷어내고 마주침. 오버플로가 마지막으로 배열 칸 안으로 쏙 들어가 크기에 맞게 정리됨
+- 26~30초: 도시가 초록색으로 빛나며 &quot;Bounds checked ✓&quot;, 오버플로가 작아진 채 꾸벅 인사
+
+[비주얼 스타일]
+- 어두운 에디터 테마 배경, 코드 문자들이 건물과 지형을 이룸
+- 캐릭터만 따뜻한 색으로 강조
+
+[모션 연출]
+- 캐릭터는 스쿼시 &amp; 스트레치로 생동감 있게
+- 장면 전환은 카메라가 코드 줄을 따라 스크롤하며 이어지게 (컷 최소화)
+
+[사운드 디자인]
+- 발소리 톡톡, 경고 비프, 추격 구간 빠른 리듬, 마지막 체크 차임
+
+[배경음악]
+- music/10_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기)
+- 원곡 표기 예: &quot;Funky Happy Day Light&quot; / Drift_Sound / https://pixabay.com/music/funk-funky-happy-day-light-473457/
+- 파일이 없으면 120 BPM 펑크 그루브 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+</article>
+<article class="card" id="item-11">
+  <div class="card-head">
+    <span class="num">11</span>
+    <h3>디미고 학생 프로젝트 체험전 — 교내 홍보 (3D)</h3>
+  </div>
+  <div class="chips"><span class="chip">★★★</span><span class="chip">15초</span><span class="chip warm">상세 프롬프트 예시</span></div>
+  <div class="video"><video controls preload="none" playsinline poster="posters/11.jpg" src="videos/11.mp4"></video></div>
+  <p class="look">하나의 3D 공간에 장면을 배치하고 카메라가 끊김 없이 날아가는 <b>3D 입체 글자</b> 모션그래픽. 장면별 초 단위 구성, 금지 사항, 출력 조건, 최종 검수까지 모두 지정한 상세 프롬프트 예시.</p>
+  <div class="row"><span class="minor"></span></div>
+  <div class="actions">
+    <button class="btn primary" type="button" data-copy="p11">프롬프트 복사</button>
+    <button class="btn ghost" type="button" data-view="p11" data-title="11. 디미고 학생 프로젝트 체험전 — 교내 홍보 (3D)">프롬프트 보기</button>
+  </div>
+  <pre class="prompt-src" id="p11" hidden>디미고 학생들이 만든 웹앱과 디지털 작품을 직접 체험해 보고 싶게 만드는 15초 교내 홍보 3D 모션그래픽을 제작해줘.
+
+행사 콘셉트는 ‘디미고 학생 프로젝트 체험전’이야. 학생들의 아이디어가 실제로 작동하는 결과물이 되었다는 점을 보여줘. 친구의 작품을 발견하고, 직접 써보고, 피드백을 남기도록 유도해줘.
+
+[비주얼 스타일]
+- 화면 비율: 16:9
+- 배경: 블랙
+- 글자: 화이트
+- 강조 색상: 형광 연두
+- 굵은 고딕 계열 한글 글꼴을 사용해줘.
+- 모든 핵심 단어는 두께가 있는 3D 입체 글자(앞면 흰색·형광 연두, 옆면은 같은 색의 어두운 톤)로 만들어줘.
+- 모든 장면을 하나의 3D 공간 안에 배치하고, 카메라가 그 공간을 날아다니며 장면을 보여주게 해줘.
+- 핵심 단어는 화면을 꽉 채우거나 가장자리 밖으로 일부 잘려 나갈 정도로 크게 배치해줘.
+- 상단과 하단에는 짧은 영문 문구가 흐르는 띠를 넣어줘.
+- 영문 띠 문구: “DIMIGO — BUILD IT — TRY IT — SHARE IT”
+- 커서, 클릭 표시, 코드 괄호, 브라우저 창을 단순한 도형으로 표현하고, 3D 공간 속 판(plane)이나 입체로 띄워줘.
+- 상단·하단 영문 띠는 3D 공간이 아닌 화면에 고정해줘.
+- 설명 문장은 줄이고, 타이포그래피와 움직임으로 전달해줘.
+
+[장면 구성]
+
+0~3초: 호기심 유도
+- 검정 화면에 작은 커서가 깜빡이다가 클릭해줘.
+- “이거”가 크게 등장하고, 이어서 “우리 학교 학생이”와 “만들었다고?”가 빠르게 등장해줘.
+- 최종적으로 “이거 우리 학교 학생이 만들었다고?”가 읽히도록 구성해줘.
+- “만들었다고?”는 형광 연두로 강조해줘.
+
+3~6초: 프로젝트 공개
+- 화면을 양쪽으로 나눠 한쪽에는 거대한 코드 괄호, 다른 쪽에는 단순한 웹앱 화면을 보여줘.
+- 입체 코드 괄호 &quot;&lt;/&gt;&quot;가 90도 회전하며 웹앱 카드로 뒤집히고, 카드가 날아가 비스듬히 놓인 브라우저 창의 빈칸에 끼워지게 해줘.
+- “아이디어가” → “진짜 작동한다”를 순서대로 보여줘.
+- 실제 프로젝트 자료가 없으면 추상적인 UI를 사용하고, 실제 서비스의 기능처럼 구체적인 내용을 지어내지는 말아줘.
+
+6~10초: 참여 행동 제시
+- 01, 02, 03 세 정거장을 옆으로 나란히 세우고, 카메라가 옆으로 이동하며 차례로 보여줘.
+- 각 정거장의 한쪽에는 거대한 입체 번호를 세워줘.
+- 다른 쪽에는 아래 문구를 순서대로 배치해줘.
+  01 “직접 써보고”
+  02 “취향을 발견하고”
+  03 “한 줄 피드백”
+- 클릭, 카드 선택, 댓글 입력을 간단한 도형 애니메이션으로 표현해줘.
+- 컷은 경쾌하게 전환하되, 각 문구를 읽을 시간을 확보해줘.
+
+10~12초: 초대
+- “다음 아이디어의”가 등장한 뒤 “주인공은 너”를 크게 보여줘.
+- “너”에 형광 연두색 밑줄이 빠르게 그어지도록 해줘.
+
+12~15초: 행사명과 마무리
+- 중앙에 “디미고 학생 프로젝트 체험전”을 선명하게 배치해줘.
+- 아래에는 “친구의 아이디어를 직접 플레이하다”를 보조 문구로 넣어줘.
+- 마지막 장면은 약 3초간 읽을 수 있게 안정적으로 유지해줘.
+- 날짜와 장소는 제공되지 않았으므로 임의로 만들지 말아줘.
+- 영문 띠만 천천히 흐르며 마무리해줘.
+
+[모션 연출]
+- 장면 전환은 컷 없이 카메라 이동(앞으로 날아가기, 옆으로 이동, 살짝 돌아보기)으로 이어줘.
+- 음악의 킥과 임팩트에 맞춰 화면이 순간적으로 확대되는 줌 펀치를 넣고, 카메라가 비행할 때는 살짝 기울어지게(롤) 해줘.
+- 카메라 궤도를 크게 잡고 글자 두께를 충분히 줘서 입체감을 강하게 보여줘.
+- 글자는 깊은 곳에서 날아오기, 바닥에서 일어서기(플립), 옆에서 회전하며 들어오기 등 3D 움직임으로 등장시켜줘.
+- 읽어야 하는 순간에는 글자가 카메라를 거의 정면(±15° 이내)으로 바라보게 해서 가독성을 지켜줘.
+- 모든 글자에 같은 효과를 반복하지 말고 장면마다 움직임을 달리해줘.
+- 중요한 글자는 읽히는 동안 위치를 안정적으로 유지해줘.
+- 불필요한 회전이나 과도한 번쩍임은 피하고, 글자와 도형의 움직임으로 에너지를 표현해줘.
+- 화면 전환과 강조 동작을 음악의 비트에 맞춰줘.
+
+[사운드]
+- 영화 예고편처럼 임팩트 있고 강렬한 일렉트로닉 배경음악을 사용해줘.
+- 장면이 바뀌는 순간(1초, 3초, 6초, 10.5초, 12초)마다 상승음(라이저) → 묵직한 임팩트(서브 붐 + 금관 브람 + 크래시)를 넣어줘.
+- 거친 베이스와 넓은 코드 스탭, 16분 하이햇, 킥마다 베이스가 눌렸다 올라오는 펌핑 효과를 넣어줘.
+- 10~10.5초는 스네어 롤로 긴장을 모았다가 10.5초에 드롭해줘.
+- music/11_bgm.mp3 파일이 있으면 그 음악을 사용해줘 (Pixabay 등에서 내려받아 넣기, 원곡 표기: 곡 제목 / 작곡자 / 링크)
+- 파일이 없으면 위 설명대로 드럼·베이스·신시사이저를 코드로 직접 합성해줘.
+- 특정 기존 곡의 멜로디는 재현하지 말아줘.
+- 커서 클릭에는 짧은 클릭음, 큰 글자 등장에는 짧은 타격음, 장면 전환에는 가벼운 전환음을 넣어줘.
+- 배경음악이 효과음을 덮지 않도록 음량을 조절해줘.
+- 시작과 끝에는 짧은 오디오 페이드를 적용해줘.
+
+[출력 조건]
+- 외부 이미지 없이 코드로 글자와 오브제를 생성해줘.
+- Three.js 같은 3D 라이브러리를 쓸 수 없는 환경이면 원근 투영을 직접 구현해도 돼.
+- 해상도: 1920×1080
+- 프레임레이트: 30fps
+- 길이: 정확히 15초
+- 최종 결과물: H.264 영상과 AAC 오디오가 포함된 MP4 + 미리보기
+- 수정할 수 있도록 제작에 사용한 소스 코드도 함께 제공해줘.
+- 제작 환경에서 MP4 출력이 불가능하면 제작 전에 가능한 출력 형태를 알려줘.
+
+[최종 검수]
+- 한글이 깨지거나 의도하지 않게 잘리는지 확인해줘.
+- 큰 글자의 장식적인 잘림과 별개로, 핵심 문구의 전체 의미는 읽을 수 있어야 해.
+- 화면·음악·효과음의 타이밍을 확인해줘.
+- MP4에 실제 오디오 트랙과 배경음악 신호가 들어 있는지 확인해줘.
+- 마지막 행사명이 충분히 읽히는지 확인한 후 최종 파일을 제공해줘.</pre>
+</article></div>
+</div></section>
+
+<section id="blank"><div class="wrap">
+  <h2>빈 프롬프트 — 내 주제로 만들기</h2>
+  <p class="sub">왼쪽 칸 입력 → 오른쪽 프롬프트 자동 완성 · 오른쪽에서 직접 수정 가능 · 빈칸은 ________ 로 유지</p>
+  <div class="builder">
+    <form class="form" id="bform" autocomplete="off">
+      <label>참고 영상 주소 <small>Prompt Motion에서 고른 영상</small><input name="ref" placeholder="https://www.prompt-motion.com/..."></label>
+      <label>참고 영상에서 가져올 점<input name="refwhat" placeholder="예: 굵은 글자와 빠른 템포"></label>
+      <div class="two">
+        <label>길이(초)<input name="sec" type="number" min="5" max="60" placeholder="15"></label>
+        <label>영상 스타일<input name="style" placeholder="예: 키네틱 타이포, 픽셀아트"></label>
+      </div>
+      <div class="two">
+        <label>과정의 시작<input name="from" placeholder="예: 빈 컵"></label>
+        <label>과정의 끝<input name="to" placeholder="예: 완성된 라면"></label>
+      </div>
+      <label>보여 줄 대상<input name="who" placeholder="예: 컴퓨터를 처음 배우는 중학생"></label>
+      <div class="two">
+        <label>배경<input name="bg" placeholder="예: 검정"></label>
+        <label>주인공 오브제<input name="hero" placeholder="예: 빛나는 패킷"></label>
+      </div>
+      <div class="two">
+        <label>색 2~3개<input name="colors" placeholder="예: 검정, 흰색, 형광 연두"></label>
+        <label>연결 요소 1개<input name="link" placeholder="예: 주황색 점 하나"></label>
+      </div>
+      <label>장면 구성 <small>한 줄에 한 장면, "0~3초: …" 형식</small><textarea name="scenes" placeholder="0~3초: &#10;3~6초: &#10;6~10초: &#10;마지막 2초: "></textarea></label>
+      <label>화면에 나올 단어 3~5개<input name="words" placeholder="예: 입력, 처리, 결과"></label>
+      <label>가장 강한 순간 1곳<input name="peak" placeholder="예: 8초에 방패가 막는 순간"></label>
+      <label>효과음<input name="sfx" placeholder="예: 클릭, 착지, 완성 차임"></label>
+      <label>배경음악 <small>곡 제목 / 작곡자 / 링크 — 비우면 코드로 합성</small><input name="bgm" placeholder='예: "Cyber Glitch" / Meraj_Melody / https://pixabay.com/...'></label>
+    </form>
+    <div class="out">
+      <textarea id="bout" spellcheck="false" aria-label="완성된 프롬프트">모션 레퍼런스: https://www.prompt-motion.com/________
+위 영상의 ________ 를 참고해 아래 영상을 제작해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+__초 분량의 ________ 영상을 만들어줘.
+주제(과정): &quot;________ → ________&quot;
+대상: ________
+
+[비주얼 스타일]   배경 / 주인공 오브제 / 색 2~3개 / 연결 요소 1개
+[장면 구성]       0~_초 / _~_초 / _~_초 / 마지막 2초
+[텍스트]          화면 단어 3~5개, 사실은 조사 후 정확하게
+[모션 연출]       가장 강한 순간 1곳
+[사운드 디자인]   장면마다 효과음 1개, 코드로 합성
+[배경음악]        Pixabay 곡 / 작곡자 / 링크 / music/XX_bgm.mp3
+
+(+ 공통 블록)
+
+[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</textarea>
+      <div class="opts">
+        <label><input type="checkbox" id="bcommon" checked> 공통 블록 포함</label>
+        <button class="btn ghost" type="button" id="breset">칸 비우기</button>
+        <button class="btn primary" type="button" id="bcopy">프롬프트 복사</button>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section id="more"><div class="wrap">
+  <h2>더 둘러볼 참고 영상</h2>
+  <div class="box" style="margin-top:12px"><ul><li><a href="https://www.prompt-motion.com/blueoctopusai-dd17bd" target="_blank" rel="noopener">스포츠 중계의 노란 퍼스트다운 선 원리 설명 (영어 프롬프트, 설명 영상) ↗</a></li><li><a href="https://www.prompt-motion.com/twoclipping-5cba86" target="_blank" rel="noopener">도형 하나가 UI 상태로 계속 변형 ↗</a></li><li><a href="https://www.prompt-motion.com/hoyoyoda-3a5c08" target="_blank" rel="noopener">한국 추석 픽셀 밤 풍경 (한국어 프롬프트) ↗</a></li><li><a href="https://www.prompt-motion.com/aisongman-71ffac" target="_blank" rel="noopener">픽셀아트 카드 배틀 게임 ↗</a></li><li><a href="https://www.prompt-motion.com/apoorvjain25-d24184" target="_blank" rel="noopener">태양에서 출발한 광자의 여행 ↗</a></li><li><a href="https://www.prompt-motion.com/kloss-xyz-fe0c31" target="_blank" rel="noopener">AI 역사의 주요 순간 타임라인 (영어 프롬프트) ↗</a></li></ul></div>
+</div></section>
+
+<footer><div class="wrap">
+  샘플 영상: Python(PIL + numpy)으로 프레임과 소리 합성 (외부 이미지·음원 없음) · 영상별 소스와 키프레임은 각 카드 링크에서 확인
+</div></footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="pdlg" aria-labelledby="pdlg-title">
+  <div class="dlg-head">
+    <h3 id="pdlg-title">프롬프트</h3>
+    <button class="btn primary" type="button" id="pdlg-copy">프롬프트 복사</button>
+    <button class="btn ghost" type="button" id="pdlg-close" aria-label="닫기">닫기 ✕</button>
+  </div>
+  <pre id="pdlg-pre"></pre>
+</dialog>
+<pre id="common" hidden>[금지]
+- 장면과 관계없는 글로우, 파티클 폭발, 렌즈 플레어, 화면 흔들림
+- 아무 의미 없는 크로스페이드 전환 (모든 장면은 앞 장면에서 자라나게)
+- 과한 바운스 이징 (스프링은 아주 작은 오버슈트까지만)
+- 화면 모서리의 장식용 HUD 텍스트
+- 1초 넘게 아무 변화 없는 구간 (마지막 2초 제외)
+- 템플릿처럼 보이는 모든 것
+
+[제작 방식]
+- 단일 HTML 파일, 모든 화면은 seek(t) 함수에서 시간 t만으로 계산해줘
+  (CSS transition·타이머·Math.random 금지 → 어느 프레임을 다시 렌더해도 똑같이 나오게)
+- Playwright로 30fps 프레임을 캡처하고 ffmpeg로 MP4를 만들어줘
+- 외부 이미지 없이 코드만으로 오브제를 그려줘
+
+[배경음악]
+- music 폴더에 배경음악 mp3가 있으면 그 파일을 사용해줘 (파일명은 위 [배경음악] 참고)
+- 파일이 없으면 위 [배경음악]에 적힌 분위기대로 음악을 코드로 직접 합성해줘 (기존 곡 멜로디 사용 금지)
+- 배경음악은 효과음이 잘 들리게 낮추고, 시작·끝에 짧은 페이드
+
+[출력]
+- 1920×1080 / 30fps / H.264 / AAC 오디오 포함
+- MP4 + 주요 장면 키프레임 미리보기 이미지
+
+[최종 검수]
+- 오디오 트랙과 배경음악 신호가 실제로 들어갔는지 확인
+- 화면과 효과음 싱크 확인
+- 화면에 나온 사실(숫자, 연도, 용어)이 정확한지 다시 확인
+- 금지 목록 효과가 들어갔으면 제거</pre>
+<script>
+const P = id => document.getElementById(id).textContent;
+const toast = document.getElementById('toast');
+let tt;
+function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('show'), 1600); }
+
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.left = '0'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove(); return ok;
+}
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+  }
+  return legacyCopy(text);
+}
+function selectAll(el) {
+  const r = document.createRange(); r.selectNodeContents(el);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+}
+function flash(btn, ok) {
+  const old = btn.dataset.label || btn.textContent; btn.dataset.label = old;
+  btn.textContent = ok ? '복사 완료 ✓' : '선택됨 — Ctrl+C';
+  btn.classList.toggle('done', ok);
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('done'); }, 1500);
+}
+
+// ── 프롬프트 창 (팝업) ──
+const dlg = document.getElementById('pdlg'), dlgPre = document.getElementById('pdlg-pre'),
+      dlgTitle = document.getElementById('pdlg-title'), dlgCopy = document.getElementById('pdlg-copy');
+function openPrompt(id, title) {
+  dlgPre.textContent = document.getElementById(id).textContent;
+  dlgTitle.textContent = title;
+  dlg.showModal(); dlgPre.scrollTop = 0;
+}
+document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => openPrompt(btn.dataset.view, btn.dataset.title)));
+document.getElementById('pdlg-close').addEventListener('click', () => dlg.close());
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });   // 바깥 클릭 시 닫기
+dlgCopy.addEventListener('click', async () => {
+  const ok = await copyText(dlgPre.textContent); flash(dlgCopy, ok);
+  if (ok) say('프롬프트 복사 완료'); else { selectAll(dlgPre); say('Ctrl+C로 복사'); }
+});
+document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
+  const ok = await copyText(document.getElementById(btn.dataset.copy).textContent); flash(btn, ok);
+  if (ok) say('프롬프트 복사 완료');
+  else { openPrompt(btn.dataset.copy, ''); selectAll(dlgPre); say('Ctrl+C로 복사'); }
+}));
+// 영상 하나를 재생하면 나머지는 멈춤
+document.querySelectorAll('video').forEach(v => v.addEventListener('play', () =>
+  document.querySelectorAll('video').forEach(o => { if (o !== v) o.pause(); })));
+
+// ── 빈 프롬프트 만들기 ──
+const form = document.getElementById('bform'), out = document.getElementById('bout'), useCommon = document.getElementById('bcommon');
+const B = '________';
+const v = k => (form.elements[k].value || '').trim();
+const or = (x, d = B) => x || d;
+let edited = false;
+function build() {
+  const scenes = v('scenes') ? v('scenes').split('\n').map(s => s.trim()).filter(Boolean).map(s => '- ' + s.replace(/^-\s*/, '')).join('\n')
+                           : '- 0~_초: ' + B + '\n- _~_초: ' + B + '\n- _~_초: ' + B + '\n- 마지막 2초: ' + B;
+  const bgm = v('bgm') ? '- ' + v('bgm') + '\n- music/XX_bgm.mp3 파일이 없으면 분위기에 맞는 음악을 코드로 합성해줘'
+                       : '- 분위기에 맞는 배경음악을 코드로 직접 합성해줘 (기존 곡 멜로디는 쓰지 마)';
+  let s = `모션 레퍼런스: ${or(v('ref'), 'https://www.prompt-motion.com/' + B)}
+위 영상의 ${or(v('refwhat'))}를 참고해 아래 영상을 제작해줘.
+링크를 직접 확인할 수 없으면 아래 설명만을 기준으로 진행해줘.
+
+${or(v('sec'), '__')}초 분량의 ${or(v('style'))} 영상을 만들어줘.
+주제(과정): "${or(v('from'))} → ${or(v('to'))}"
+대상: ${or(v('who'))}
+
+[비주얼 스타일]
+- 배경: ${or(v('bg'))}
+- 주인공 오브제: ${or(v('hero'))}
+- 색: ${or(v('colors'))}
+- 연결 요소: ${or(v('link'))} (모든 장면을 이 요소가 이어 주게)
+
+[장면 구성]
+${scenes}
+
+[텍스트]
+- 화면에 나오는 단어: ${or(v('words'))}
+- 사실(숫자, 연도, 이름)은 먼저 조사하고 정확하게, 지어내지 마
+
+[모션 연출]
+- 가장 강한 순간: ${or(v('peak'))}
+- 장면은 앞 장면의 요소가 변형되며 이어지게
+
+[사운드 디자인]
+- ${or(v('sfx'))}
+- 효과음은 코드로 직접 합성해줘
+
+[배경음악]
+${bgm}`;
+  if (useCommon.checked) s += '\n\n' + P('common');
+  return s;
+}
+function render() { out.value = build(); edited = false; }
+form.addEventListener('input', render);
+useCommon.addEventListener('change', render);
+out.addEventListener('input', () => edited = true);
+document.getElementById('breset').addEventListener('click', () => { form.reset(); render(); });
+document.getElementById('bcopy').addEventListener('click', async e => {
+  const btn = e.currentTarget;
+  const ok = await copyText(out.value); flash(btn, ok);
+  if (ok) say('내 프롬프트 복사 완료');
+  else { out.focus(); out.select(); say('Ctrl+C로 복사'); }
+});
+render();
+</script>
+</body>
+</html>
